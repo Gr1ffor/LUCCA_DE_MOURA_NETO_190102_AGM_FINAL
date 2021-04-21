@@ -1,5 +1,6 @@
 package com.example.listapersonagem.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.listapersonagem.R;
@@ -65,16 +67,29 @@ public class ListaPersonagemActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         // Aparece o botão de Remover
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add("Remover");
+        getMenuInflater().inflate(R.menu.activity_lista_personagens_menu, menu);
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        // remove o personagem selecionado
-        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Personagem personagemEscolhido = adapter.getItem(menuInfo.position);
-        adapter.remove(personagemEscolhido);
+        configuraMenu(item);
         return super.onContextItemSelected(item);
+    }
+
+    private void configuraMenu(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == R.id.activity_lista_personagem_menu_remover) {
+            //aparece a janela para voce confirma se quer deletar o personagem ou não
+            new AlertDialog.Builder(this).setTitle("Removendo Personagem").setMessage("Tem certeza que deseja remover?").setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // remove o personagem selecionado
+                    AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                    Personagem personagemEscolhido = adapter.getItem(menuInfo.position);
+                    adapter.remove(personagemEscolhido);
+                }
+            }).setNegativeButton("Não", null).show();
+        }
     }
 
     private void configuraLista() {
