@@ -26,6 +26,10 @@ public class FormularioPersonagemActivity extends AppCompatActivity {
     private EditText campoNome;
     private EditText campoAltura;
     private EditText campoNascimento;
+    private EditText campoTelefone;
+    private EditText campoCep;
+    private EditText campoRg;
+    private EditText campoGenero;
     private final PersonagemDAO dao = new PersonagemDAO();
     private Personagem personagem;
 
@@ -40,7 +44,7 @@ public class FormularioPersonagemActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //ao selecionar finaliza o formulario
         int itemId = item.getItemId();
-        if (itemId == R.id.activity_formulario_personagem_menu_salvar){
+        if (itemId == R.id.activity_formulario_personagem_menu_salvar) {
             finalizarFormulario();
         }
         return super.onOptionsItemSelected(item);
@@ -69,7 +73,7 @@ public class FormularioPersonagemActivity extends AppCompatActivity {
 
     private void finalizarFormulario() {
         preencherPersonagem();
-        if(personagem.IdValido()){
+        if (personagem.IdValido()) {
             //edita as info
             dao.editar(personagem);
             //finaliza
@@ -90,47 +94,77 @@ public class FormularioPersonagemActivity extends AppCompatActivity {
             setTitle(TITULO_APPBAR_EDITA_PERSONAGEM);
             personagem = (Personagem) dados.getSerializableExtra(CHAVE_PERSONAGEM);
             preencheCampos();
-        } else{
+        } else {
             setTitle(TITULO_APPBAR_NOVO_PERSONAGEM);
             personagem = new Personagem();
         }
     }
 
+    // preenche os campos da agenda
     private void preencheCampos() {
         campoNome.setText(personagem.getNome());
         campoAltura.setText(personagem.getAltura());
         campoNascimento.setText(personagem.getNascimento());
+        campoTelefone.setText(personagem.getTelefone());
+        campoCep.setText(personagem.getCep());
+        campoRg.setText(personagem.getRg());
+        campoGenero.setText(personagem.getGenero());
     }
-
-
 
 
     private void inicializacaoCampos() {
         //Identificação dos campos
-        campoNome = findViewById(R.id.editTextTextPersonName);
+        campoNome = findViewById(R.id.editTextNome);
         campoNascimento = findViewById(R.id.editTextDataDeNascimento);
         campoAltura = findViewById(R.id.editTextAltura);
-
+        campoTelefone = findViewById(R.id.editTextTelefone);
+        campoCep = findViewById(R.id.editTextTextCep);
+        campoRg = findViewById(R.id.editTextTextRg);
+        campoGenero = findViewById(R.id.editTextTextGenero);
         SimpleMaskFormatter smfAltura = new SimpleMaskFormatter(("N, NN"));
         MaskTextWatcher mtwAltura = new MaskTextWatcher(campoAltura, smfAltura);
         campoAltura.addTextChangedListener(mtwAltura);
 
+        //coloca uma mascara para ajeitar os numeros de acordo com uma data de nascimento
         SimpleMaskFormatter smfNascimento = new SimpleMaskFormatter(("NN/NN/NNNN"));
         MaskTextWatcher mtwNascimento = new MaskTextWatcher(campoNascimento, smfNascimento);
-        campoAltura.addTextChangedListener(mtwNascimento);
+        campoNascimento.addTextChangedListener(mtwNascimento);
+
+        //coloca uma mascara para ajeitar os numeros de acordo com um telefone
+        SimpleMaskFormatter smfTelefone = new SimpleMaskFormatter(("(NN)NNNNN-NNNN"));
+        MaskTextWatcher mtwTelefone = new MaskTextWatcher(campoTelefone, smfTelefone);
+        campoTelefone.addTextChangedListener(mtwTelefone);
+
+        //coloca uma mascara para ajeitar os numeros de acordo com um Cep
+        SimpleMaskFormatter smfCep = new SimpleMaskFormatter(("NNNNN-NNN"));
+        MaskTextWatcher mtwCep = new MaskTextWatcher(campoCep, smfCep);
+        campoCep.addTextChangedListener(mtwCep);
+
+        //coloca uma mascara para ajeitar os numeros de acordo com um Rg
+        SimpleMaskFormatter smfRg = new SimpleMaskFormatter(("NN.NNN.NNN-N"));
+        MaskTextWatcher mtwRg = new MaskTextWatcher(campoRg, smfRg);
+        campoRg.addTextChangedListener(mtwRg);
 
     }
 
-    private void preencherPersonagem(){
+    private void preencherPersonagem() {
         //Busca as informações de nome, nascimento e altura, assim os convertendo em string
         String nome = campoNome.getText().toString();
         String nascimento = campoNascimento.getText().toString();
         String altura = campoAltura.getText().toString();
+        String telefone = campoTelefone.getText().toString();
+        String cep = campoCep.getText().toString();
+        String rg = campoRg.getText().toString();
+        String genero = campoGenero.getText().toString();
 
         //set e editar o personagem
         personagem.setNome(nome);
         personagem.setAltura(altura);
         personagem.setNascimento(nascimento);
+        personagem.setTelefone(telefone);
+        personagem.setCep(cep);
+        personagem.setRg(rg);
+        personagem.setGenero(genero);
     }
 
 }
